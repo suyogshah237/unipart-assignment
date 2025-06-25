@@ -11,12 +11,13 @@ To test the application, follow these steps:
     https://unipart-assignment.web.app/
 
 #### Login Credentials
-   **Admin User**
-    Email: `bhabani.nayak@unipart.com`
-    Password: `Unipart@123`
-   **Regular User**
-    Email: `suyog.shah@gmail.com`
-    Password: `Unipart@123`
+**Admin User**
+- Email: `bhabani.nayak@unipart.com`
+- Password: `Unipart@123`
+
+**Regular User**
+- Email: `suyog.shah@gmail.com`
+- Password: `Unipart@123`
 
 
 ## Features
