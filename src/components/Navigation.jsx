@@ -15,25 +15,50 @@ const Navigation = () => {
         } catch (error) {
             console.error('Logout error:', error);
         }
-    };return (
-        <Navbar bg="primary" variant="dark" expand="md" className="mb-0 shadow-sm">
+    };
+    return (
+        <Navbar style={{ backgroundColor: '#7485a9' }} variant="dark" expand="md" className="mb-0 shadow-sm">
             <Container>
-                <Navbar.Brand as={Link} to="/">Unipart App</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/">
+                    <img
+                        src="/logo.png"
+                        alt="Unipart Logo"
+                        height="30"
+                        className="d-inline-block align-top me-2"
+                    />
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">                    <Nav className="ms-auto">
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="ms-auto">
                         {currentUser ? (
-                            <>                                <Nav.Link className="text-light">
+                            <>
+                                <Nav.Link className="text-light">
                                     {currentUser.displayName || currentUser.email}
                                     {userRole && (
                                         <Badge bg="light" text="primary" className="ms-1">
                                             {userRole}
                                         </Badge>
-                                    )}                                </Nav.Link>                                <Button 
-                                    variant="outline-light" 
-                                    size="sm" 
-                                    className="ms-2" 
-                                    onClick={handleLogout}
-                                >
+                                    )}                                
+                                    </Nav.Link>                                
+                                    <Button
+                                        variant="outline-light"
+                                        size="sm"
+                                        className="ms-2"
+                                        onClick={handleLogout}
+                                        style={{ 
+                                            borderColor: '#ffffff',
+                                            color: '#ffffff',
+                                            transition: 'background-color 0.3s, color 0.3s'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.backgroundColor = '#d72626';
+                                            e.currentTarget.style.borderColor = '#d72626';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'transparent';
+                                            e.currentTarget.style.borderColor = '#ffffff';
+                                        }}
+                                    >
                                     Logout
                                 </Button>
                             </>

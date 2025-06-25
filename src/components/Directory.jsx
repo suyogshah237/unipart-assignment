@@ -4,45 +4,6 @@ import LoadingSpinner from './LoadingSpinner';
 import { Form, InputGroup, FormControl, Button, Alert } from 'react-bootstrap';
 import '../styles/Directory.css';
 
-// Example data in case the API doesn't return any data
-const EXAMPLE_DATA = [
-  {
-    "ID": 1,
-    "Name": "Alice Smith",
-    "Department": "Engineering",
-    "Start Date": "2022-01-14T18:30:00.000Z",
-    "Email": "alice.s@example.com"
-  },
-  {
-    "ID": 2,
-    "Name": "Bob Johnson",
-    "Department": "Marketing",
-    "Start Date": "2021-10-31T18:30:00.000Z",
-    "Email": "bob.j@example.com"
-  },
-  {
-    "ID": 3,
-    "Name": "Charlie Williams",
-    "Department": "Finance",
-    "Start Date": "2023-03-15T18:30:00.000Z",
-    "Email": "charlie.w@example.com"
-  },
-  {
-    "ID": 4,
-    "Name": "Diana Brown",
-    "Department": "Human Resources",
-    "Start Date": "2022-07-01T18:30:00.000Z",
-    "Email": "diana.b@example.com"
-  },
-  {
-    "ID": 5,
-    "Name": "Evan Davis",
-    "Department": "Operations",
-    "Start Date": "2021-05-22T18:30:00.000Z",
-    "Email": "evan.d@example.com"
-  }
-];
-
 const Directory = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -50,7 +11,7 @@ const Directory = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({
-    key: null,
+    key: 'Name',
     direction: 'ascending'
   });
   const { currentUser, userRole } = useAuth();  useEffect(() => {
@@ -73,10 +34,10 @@ const Directory = () => {
           receivedData = result;
           setError(null);
         } else {
-          // If API returns no data or wrong format, show example data
-          console.log('Using example data');
-          receivedData = EXAMPLE_DATA;
-          setError('API returned no data. Displaying example data instead.');
+          // If API returns no data or wrong format, show empty data array
+          console.log('No data returned from API');
+          receivedData = [];
+          setError('No directory data is currently available.');
         }
         
         // Format dates if present
@@ -95,20 +56,10 @@ const Directory = () => {
         setFilteredData(receivedData);
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError('Failed to load directory data. Displaying example data instead.');
-        // Use example data on error
-        const formattedExampleData = EXAMPLE_DATA.map(item => {
-          const formattedItem = {...item};
-          if (formattedItem["Start Date"]) {
-            const date = new Date(formattedItem["Start Date"]);
-            if (!isNaN(date)) {
-              formattedItem["Start Date"] = date.toLocaleDateString();
-            }
-          }
-          return formattedItem;
-        });
-        setData(formattedExampleData);
-        setFilteredData(formattedExampleData);
+        setError('Failed to load directory data.');
+        // Use empty array on error
+        setData([]);
+        setFilteredData([]);
       } finally {
         setLoading(false);
       }
@@ -134,7 +85,7 @@ const Directory = () => {
     }
   }, [data, searchTerm]);  // Apply sorting to filtered data
   const getSortedData = () => {
-    if (!sortConfig.key || !filteredData.length) {
+    if (!filteredData.length) {
       return filteredData;
     }
     
@@ -144,7 +95,7 @@ const Directory = () => {
       : ['Name', 'Department'];
     
     // Check if the sorted column is visible for the current role
-    if (!visibleColumns.includes(sortConfig.key)) {
+    if (sortConfig.key && !visibleColumns.includes(sortConfig.key)) {
       return filteredData;
     }
     
@@ -245,10 +196,10 @@ const Directory = () => {
         receivedData = result;
         setError(null);
       } else {
-        // If API returns no data or wrong format, show example data
-        console.log('Using example data (refresh)');
-        receivedData = EXAMPLE_DATA;
-        setError('API returned no data. Displaying example data instead.');
+        // If API returns no data or wrong format, show empty data array
+        console.log('No data returned from API (refresh)');
+        receivedData = [];
+        setError('No directory data is currently available.');
       }
       
       // Format dates if present
@@ -268,20 +219,10 @@ const Directory = () => {
       setSearchTerm('');
     } catch (err) {
       console.error('Error refreshing data:', err);
-      setError('Failed to refresh directory data. Displaying example data instead.');
-      // Use example data on error
-      const formattedExampleData = EXAMPLE_DATA.map(item => {
-        const formattedItem = {...item};
-        if (formattedItem["Start Date"]) {
-          const date = new Date(formattedItem["Start Date"]);
-          if (!isNaN(date)) {
-            formattedItem["Start Date"] = date.toLocaleDateString();
-          }
-        }
-        return formattedItem;
-      });
-      setData(formattedExampleData);
-      setFilteredData(formattedExampleData);
+      setError('Failed to refresh directory data.');
+      // Use empty array on error
+      setData([]);
+      setFilteredData([]);
     } finally {
       setLoading(false);
     }
@@ -304,7 +245,7 @@ const Directory = () => {
   return (    <div className="directory-container">      <div className="directory-header">
         <h1>Employee Directory</h1>
         <div className="d-flex align-items-center">
-          {!loading && !error && data.length > 0 && (
+          {!loading && (
             <Button 
               variant="outline-secondary" 
               onClick={handleRefresh}
@@ -319,28 +260,40 @@ const Directory = () => {
       
       {loading && <LoadingSpinner message="Loading directory data..." />}
       
-      {error && <Alert variant="warning">{error}</Alert>}
-        {!loading && !error && (
+      {!loading && error && <Alert variant="warning">{error}</Alert>}
+      
+      {!loading && (
         <>          <div className="directory-controls">
-            <Form className="mb-4 search-form">
-              <InputGroup>
-                <InputGroup.Text>
-                  <i className="bi bi-search"></i>
-                </InputGroup.Text>
-                <FormControl
-                  placeholder="Search directory..."
-                  value={searchTerm}
-                  onChange={handleSearch}
-                />
-              </InputGroup>
-            </Form>
+            {data.length > 0 && (
+              <Form className="mb-4 search-form">
+                <InputGroup>
+                  <InputGroup.Text>
+                    <i className="bi bi-search"></i>
+                  </InputGroup.Text>
+                  <FormControl
+                    placeholder="Search directory..."
+                    value={searchTerm}
+                    onChange={handleSearch}
+                  />
+                </InputGroup>
+              </Form>
+            )}
             
             {filteredData.length > 0 && (
               <>
                 <Button 
-                  variant="outline-primary" 
+                  variant="outline-danger" 
                   className="mb-4 export-btn me-2"
                   onClick={exportToCSV}
+                  style={{ borderColor: '#d72626', color: '#d72626' }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = '#d72626';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'white';
+                    e.currentTarget.style.color = '#d72626';
+                  }}
                 >
                   <i className="bi bi-download me-2"></i>
                   Export to CSV
@@ -349,11 +302,11 @@ const Directory = () => {
             )}
           </div>
 
-          {filteredData.length === 0 ? (
+          {filteredData.length === 0 && !error ? (
             <div className="no-data">
               {data.length === 0 ? "No directory data available." : "No results match your search."}
             </div>
-          ) : (
+          ) : filteredData.length > 0 && (
             <div className="table-container">
               <table className="directory-table">
                 <thead>

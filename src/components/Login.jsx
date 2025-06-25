@@ -59,10 +59,12 @@ const Login = () => {
         <Card className="shadow-sm">
           <Card.Body className="p-4">
             <div className="text-center mb-4">
-              <h2 className="display-6 fw-bold" style={{ color: '#0D6EFD', letterSpacing: '1px', marginBottom: '4px' }}>
-                Unipart
-              </h2>
-              <div style={{ width: '60px', height: '4px', backgroundColor: '#0D6EFD', margin: '0 auto 20px' }}></div>
+              <img 
+                src="/logo.png" 
+                alt="Unipart Logo" 
+                className="mb-3" 
+                style={{ maxWidth: '150px', height: 'auto' }} 
+              />
               <h3 className="mb-4">Login</h3>
             </div>
               
@@ -95,10 +97,11 @@ const Login = () => {
                 
                 <div className="d-grid">
                   <Button 
-                    variant="primary" 
+                    variant="danger" 
                     type="submit" 
                     disabled={loading}
                     className="py-2"
+                    style={{ backgroundColor: '#d72626', borderColor: '#d72626' }}
                   >
                     {loading ? 'Logging in...' : 'Login'}
                   </Button>
@@ -116,7 +119,7 @@ const Login = () => {
                 </div>
                 
                 <div className="text-center mt-3">
-                  <p>Don't have an account? <Link to="/register">Register</Link></p>
+                  <p>Don't have an account? <Link to="/register" style={{ color: '#18348B' }}>Register</Link></p>
                 </div>
               </Form>
             </Card.Body>

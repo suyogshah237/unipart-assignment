@@ -91,14 +91,16 @@ const Register = () => {    const navigate = useNavigate();
             <Card className="shadow-sm">
                 <Card.Body className="p-4">
                     <div className="text-center mb-4">
-                        <h2 className="display-6 fw-bold" style={{ color: '#0D6EFD', letterSpacing: '1px', marginBottom: '4px' }}>
-                            Unipart
-                        </h2>
-                        <div style={{ width: '60px', height: '4px', backgroundColor: '#0D6EFD', margin: '0 auto 20px' }}></div>
+                        <img 
+                            src="/logo.png" 
+                            alt="Unipart Logo" 
+                            className="mb-3" 
+                            style={{ maxWidth: '150px', height: 'auto' }} 
+                        />
                         <h3 className="mb-3">Register</h3>
                     </div>
                     <p className="text-center mb-4">
-                        Already have an account? <Link to="/login">Login</Link>
+                        Already have an account? <Link to="/login" style={{ color: '#18348B' }}>Login</Link>
                     </p>
 
                     {error && <Alert variant="danger">{error}</Alert>}
@@ -154,10 +156,11 @@ const Register = () => {    const navigate = useNavigate();
                         </Form.Group>
 
                         <div className="d-grid">                            <Button
-                                variant="primary"
+                                variant="danger"
                                 type="submit"
                                 disabled={loading}
                                 className="py-2"
+                                style={{ backgroundColor: '#d72626', borderColor: '#d72626' }}
                             >
                                 {loading ? 'Registering...' : 'Register'}
                             </Button>
