@@ -35,13 +35,13 @@ const Navigation = () => {
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" className="custom-toggler" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="ms-auto">
+                    <Nav className="ms-auto mobile-nav-center">
                         {currentUser ? (
                             <>
-                                <Nav.Link className="text-light">
+                                <Nav.Link className="text-light mobile-user-info">
                                     {currentUser.displayName || currentUser.email}
                                     {userRole && (
-                                        <Badge bg="light" text="primary" className="ms-1">
+                                        <Badge bg="light" text="primary" className="ms-1 mobile-badge">
                                             {userRole}
                                         </Badge>
                                     )}                                
@@ -49,7 +49,7 @@ const Navigation = () => {
                                     <Button
                                         variant="outline-light"
                                         size="sm"
-                                        className="ms-2"
+                                        className="ms-2 mobile-logout-btn"
                                         onClick={handleLogout}
                                         style={{ 
                                             borderColor: '#ffffff',

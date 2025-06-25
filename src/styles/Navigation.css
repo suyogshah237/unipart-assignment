@@ -27,4 +27,114 @@
   .navbar-toggler:focus {
     box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
   }
+  
+  /* Center align the menu items on mobile */
+  .navbar-nav {
+    text-align: center;
+    width: 100%;
+    padding-top: 10px;
+  }
+  
+  /* Improved logout button for mobile */
+  .navbar-nav .btn-outline-light {
+    width: 100%;
+    margin: 10px 0 5px 0 !important;
+    padding: 8px 12px;
+    font-size: 16px !important;
+    border-radius: 5px;
+    border-width: 2px !important;
+  }
+  
+  /* Style the user info text and badge for mobile */
+  .navbar-nav .text-light {
+    text-align: center;
+    display: block;
+    margin: 5px 0;
+    padding: 5px;
+    font-weight: 500;
+  }
+  
+  /* Make badge more visible on mobile */
+  .navbar-nav .badge {
+    font-size: 0.85rem;
+    padding: 5px 8px;
+    margin-top: 5px;
+    display: inline-block;
+  }
+  
+  /* Add some spacing and styling to the collapsible menu */
+  .navbar-collapse {
+    padding: 10px 0;
+  }
+  
+  /* Additional mobile-specific styles */
+  /* Mobile logout button styling */
+  .mobile-logout-btn {
+    display: block !important;
+    margin: 10px auto !important;
+    padding: 10px !important;
+    font-size: 1rem !important;
+    font-weight: 500;
+    border-radius: 4px;
+    width: 90% !important;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Ensure proper alignment in mobile collapsed menu */
+  .navbar-nav {
+    align-items: center;
+  }
+
+  /* Improved touch target areas for mobile */
+  .mobile-user-info {
+    padding: 10px 5px !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .mobile-badge {
+    margin-top: 5px !important;
+    padding: 4px 8px !important;
+  }
+  
+  /* Mobile logout button will be wider on small screens */
+  .mobile-logout-btn {
+    width: 30% !important;
+  }
+
+  /* Desktop view remains unchanged, this only applies to mobile */
+  @media (max-width: 767.98px) {
+    .mobile-nav-center {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+    
+    .navbar-collapse {
+      text-align: center;
+    }
+  }
+}
+
+/* Very small screens adjustments */
+@media (max-width: 375px) {
+  .mobile-logout-btn {
+    width: 95% !important;
+    margin: 8px auto !important;
+  }
+  
+  .mobile-user-info {
+    font-size: 14px !important;
+  }
+  
+  .mobile-badge {
+    margin-top: 4px !important;
+  }
 }
