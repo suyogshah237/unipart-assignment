@@ -140,6 +140,7 @@ To designate a user as an Admin:
 ## Data Source
 
 The application fetches employee directory data from a Google Apps Script API. The data is displayed based on the user's role, with administrators seeing more detailed information.
+https://docs.google.com/spreadsheets/d/1Q0CnAdh_G8UpEZwceC7_nXY6CeHlrfEp-qPTVAe0n8k/edit?gid=0#gid=0
 
 ## Assumptions and Limitations
 
