@@ -112,6 +112,10 @@
   white-space: nowrap;
 }
 
+.mobile-export-btn {
+  white-space: nowrap;
+}
+
 .column-info {
   background-color: #f8f9fa;
   border-radius: 8px;
@@ -177,21 +181,135 @@
   
   .export-btn {
     width: 100%;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .directory-header {
+    align-items: center;
+  }
+  
+  .refresh-btn {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .mobile-export-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 8px;
+  }
+  
+  .mobile-export-btn i {
+    font-size: 1.2rem;
+    margin: 0;
   }
 }
 
 @media (max-width: 576px) {
+  .directory-container {
+    padding: 15px 10px;
+  }
+  
+  /* Better touch target size for mobile */
+  .directory-table th,
+  .directory-table td {
+    padding: 12px 10px;
+  }
+  
+  /* Better spacing for search box on mobile */
+  .search-form .input-group {
+    width: 100%;
+  }
+  
   .directory-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
   
   .directory-header h1 {
-    margin-bottom: 1rem;
+    margin-bottom: 0;
+    font-size: 1.5rem;
   }
   
   .refresh-btn {
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+  }
+  
+  .refresh-btn i {
+    margin-right: 0 !important;
+    font-size: 1.2rem;
+  }
+  
+  .export-btn {
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  
+  .export-btn i {
+    font-size: 1.1rem;
+  }
+  
+  .mobile-export-btn {
+    min-width: 40px;
+    height: 40px;
+  }
+  
+  .directory-controls {
+    flex-direction: column;
     width: 100%;
+  }
+  
+  .search-form {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Styles for extra small screens */
+@media (max-width: 375px) {
+  .directory-header h1 {
+    font-size: 1.25rem;
+  }
+  
+  .refresh-btn,
+  .mobile-export-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 6px;
+  }
+  
+  .mobile-export-btn i,
+  .refresh-btn i {
+    font-size: 1.1rem;
+  }
+}
+
+/* Table container adjustments */
+@media (max-width: 576px) {
+  .table-container {
+    margin-bottom: 20px;
   }
 }
 
@@ -222,4 +340,68 @@
 
 .directory-table th:hover {
   background-color: #f1f1f1;
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.mobile-export-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-export-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 8px;
+  }
+  
+  .mobile-export-btn i {
+    font-size: 1.2rem;
+    margin: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .mobile-export-btn {
+    min-width: 40px;
+    height: 40px;
+  }
+}
+
+/* Hamburger menu styling */
+.navbar-toggler {
+  border: 2px solid #333 !important;
+  padding: 6px 8px;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Custom navbar toggler styling */
+.navbar-custom .navbar-toggler {
+  border-color: #333;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.custom-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 33, 33, 0.95%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Make sure the Navbar logo and items have sufficient contrast */
+.navbar-brand {
+  color: #fff;
+  font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+  color: #fff;
+  font-weight: 500;
 }

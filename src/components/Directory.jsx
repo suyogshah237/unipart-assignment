@@ -244,15 +244,36 @@ const Directory = () => {
   }
   return (    <div className="directory-container">      <div className="directory-header">
         <h1>Employee Directory</h1>
-        <div className="d-flex align-items-center">
+        <div className="d-flex align-items-center header-buttons">
           {!loading && (
             <Button 
               variant="outline-secondary" 
               onClick={handleRefresh}
               className="refresh-btn"
+              aria-label="Refresh directory"
             >
-              <i className="bi bi-arrow-clockwise me-2"></i>
-              Refresh
+              <i className="bi bi-arrow-clockwise me-md-2"></i>
+              <span className="d-none d-md-inline">Refresh</span>
+            </Button>
+          )}
+          {/* Desktop export button is hidden and shown in directory-controls */}
+          {!loading && filteredData.length > 0 && (
+            <Button 
+              variant="outline-danger" 
+              onClick={exportToCSV}
+              className="mobile-export-btn d-inline-flex d-md-none ms-2"
+              aria-label="Export to CSV"
+              style={{ borderColor: '#d72626', color: '#d72626' }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#d72626';
+                e.currentTarget.style.color = 'white';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'white';
+                e.currentTarget.style.color = '#d72626';
+              }}
+            >
+              <i className="bi bi-download"></i>
             </Button>
           )}
         </div>
@@ -283,7 +304,7 @@ const Directory = () => {
               <>
                 <Button 
                   variant="outline-danger" 
-                  className="mb-4 export-btn me-2"
+                  className="mb-4 export-btn d-none d-md-inline-flex"
                   onClick={exportToCSV}
                   style={{ borderColor: '#d72626', color: '#d72626' }}
                   onMouseOver={(e) => {
@@ -294,9 +315,10 @@ const Directory = () => {
                     e.currentTarget.style.backgroundColor = 'white';
                     e.currentTarget.style.color = '#d72626';
                   }}
+                  aria-label="Export to CSV"
                 >
                   <i className="bi bi-download me-2"></i>
-                  Export to CSV
+                  <span>Export to CSV</span>
                 </Button>
               </>
             )}

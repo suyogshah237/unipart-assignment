@@ -3,6 +3,7 @@ import { signOut } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 import { useAuth } from '../contexts/useAuth.js';
+import '../styles/Navigation.css';
 
 const Navigation = () => {
     const { currentUser, userRole } = useAuth();
@@ -17,7 +18,12 @@ const Navigation = () => {
         }
     };
     return (
-        <Navbar style={{ backgroundColor: '#7485a9' }} variant="dark" expand="md" className="mb-0 shadow-sm">
+        <Navbar 
+            style={{ backgroundColor: '#7485a9' }} 
+            variant="dark" 
+            expand="md" 
+            className="mb-0 shadow-sm navbar-custom"
+        >
             <Container>
                 <Navbar.Brand as={Link} to="/">
                     <img
@@ -27,7 +33,7 @@ const Navigation = () => {
                         className="d-inline-block align-top me-2"
                     />
                 </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Toggle aria-controls="basic-navbar-nav" className="custom-toggler" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
                         {currentUser ? (
