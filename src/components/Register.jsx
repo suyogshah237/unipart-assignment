@@ -6,7 +6,8 @@ import { auth, firestore } from '../firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import GoogleSignIn from './GoogleSignIn';
 
-const Register = () => {    const navigate = useNavigate();
+const Register = () => {    
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -19,21 +20,34 @@ const Register = () => {    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        // If the field is email, convert to lowercase
+        if (name === 'email') {
+            setFormData({ ...formData, [name]: value.toLowerCase() });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const setLoadingState = (isLoading) => {
         setLoading(isLoading);
     };
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
     const validateForm = () => {
         if (!formData.name.trim()) return 'Name is required';
         if (!formData.email.trim()) return 'Email is required';
+        if (!validateEmail(formData.email)) return 'Please enter a valid email address';
         if (!formData.password) return 'Password is required';
         if (formData.password.length < 6) return 'Password must be at least 6 characters';
         if (formData.password !== formData.confirmPassword) return 'Passwords do not match';
         return null;
-    };    const handleSubmit = async (e) => {
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const validationError = validateForm();
@@ -45,7 +59,7 @@ const Register = () => {    const navigate = useNavigate();
         try {
             setError('');
             setLoading(true);
-            // Create user with email and password
+            // Create user with email and password (email is already lowercase from handleChange)
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 formData.email,

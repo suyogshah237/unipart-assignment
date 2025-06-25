@@ -15,11 +15,21 @@ const Login = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    // If the field is email, convert to lowercase
+    if (name === 'email') {
+      setFormData({ ...formData, [name]: value.toLowerCase() });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const setLoadingState = (isLoading) => {
     setLoading(isLoading);
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
   };
 
   const handleSubmit = async (e) => {
@@ -30,10 +40,23 @@ const Login = () => {
       return;
     }
 
+    // Validate email format
+    if (!validateEmail(formData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    // Validate password length
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
     try {
       setError('');
       setLoading(true);
       
+      // Email is already lowercase from handleChange
       await signInWithEmailAndPassword(
         auth, 
         formData.email, 
@@ -54,7 +77,9 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-  };  return (
+  }; 
+  
+  return (
     <Container>
         <Card className="shadow-sm">
           <Card.Body className="p-4">
