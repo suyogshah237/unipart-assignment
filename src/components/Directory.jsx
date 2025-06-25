@@ -1,0 +1,418 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/useAuth';
+import LoadingSpinner from './LoadingSpinner';
+import { Form, InputGroup, FormControl, Button, Alert } from 'react-bootstrap';
+import '../styles/Directory.css';
+
+// Example data in case the API doesn't return any data
+const EXAMPLE_DATA = [
+  {
+    "ID": 1,
+    "Name": "Alice Smith",
+    "Department": "Engineering",
+    "Start Date": "2022-01-14T18:30:00.000Z",
+    "Email": "alice.s@example.com"
+  },
+  {
+    "ID": 2,
+    "Name": "Bob Johnson",
+    "Department": "Marketing",
+    "Start Date": "2021-10-31T18:30:00.000Z",
+    "Email": "bob.j@example.com"
+  },
+  {
+    "ID": 3,
+    "Name": "Charlie Williams",
+    "Department": "Finance",
+    "Start Date": "2023-03-15T18:30:00.000Z",
+    "Email": "charlie.w@example.com"
+  },
+  {
+    "ID": 4,
+    "Name": "Diana Brown",
+    "Department": "Human Resources",
+    "Start Date": "2022-07-01T18:30:00.000Z",
+    "Email": "diana.b@example.com"
+  },
+  {
+    "ID": 5,
+    "Name": "Evan Davis",
+    "Department": "Operations",
+    "Start Date": "2021-05-22T18:30:00.000Z",
+    "Email": "evan.d@example.com"
+  }
+];
+
+const Directory = () => {
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: 'ascending'
+  });
+  const { currentUser, userRole } = useAuth();  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('https://script.google.com/macros/s/AKfycbx8X0uRNqFZS2tCsnQ7mxQwO647Io9KsqmLwnTm-pjs_NVOBX6ieatWqDBmi7gesRT3/exec');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('API Response:', result); // Log the response for debugging
+        
+        let receivedData = [];
+        
+        // Check if data exists and is properly formatted
+        if (result && Array.isArray(result) && result.length > 0) {
+          receivedData = result;
+          setError(null);
+        } else {
+          // If API returns no data or wrong format, show example data
+          console.log('Using example data');
+          receivedData = EXAMPLE_DATA;
+          setError('API returned no data. Displaying example data instead.');
+        }
+        
+        // Format dates if present
+        receivedData = receivedData.map(item => {
+          const formattedItem = {...item};
+          if (formattedItem["Start Date"]) {
+            const date = new Date(formattedItem["Start Date"]);
+            if (!isNaN(date)) {
+              formattedItem["Start Date"] = date.toLocaleDateString();
+            }
+          }
+          return formattedItem;
+        });
+        
+        setData(receivedData);
+        setFilteredData(receivedData);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to load directory data. Displaying example data instead.');
+        // Use example data on error
+        const formattedExampleData = EXAMPLE_DATA.map(item => {
+          const formattedItem = {...item};
+          if (formattedItem["Start Date"]) {
+            const date = new Date(formattedItem["Start Date"]);
+            if (!isNaN(date)) {
+              formattedItem["Start Date"] = date.toLocaleDateString();
+            }
+          }
+          return formattedItem;
+        });
+        setData(formattedExampleData);
+        setFilteredData(formattedExampleData);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (currentUser) {
+      fetchData();
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    // Filter data based on search term
+    if (searchTerm.trim() === '') {
+      setFilteredData(data);
+    } else {
+      const lowercasedSearch = searchTerm.toLowerCase();
+      const filtered = data.filter(item => 
+        Object.values(item).some(
+          val => val && val.toString().toLowerCase().includes(lowercasedSearch)
+        )
+      );
+      setFilteredData(filtered);
+    }
+  }, [data, searchTerm]);  // Apply sorting to filtered data
+  const getSortedData = () => {
+    if (!sortConfig.key || !filteredData.length) {
+      return filteredData;
+    }
+    
+    // Get columns based on user role
+    const visibleColumns = userRole === 'ADMIN' 
+      ? ['Name', 'Department', 'Start Date', 'Email']
+      : ['Name', 'Department'];
+    
+    // Check if the sorted column is visible for the current role
+    if (!visibleColumns.includes(sortConfig.key)) {
+      return filteredData;
+    }
+    
+    return [...filteredData].sort((a, b) => {
+      // Handle different data types for sorting
+      let aValue = a[sortConfig.key];
+      let bValue = b[sortConfig.key];
+      
+      // Handle numbers
+      if (!isNaN(Number(aValue)) && !isNaN(Number(bValue))) {
+        return sortConfig.direction === 'ascending' 
+          ? Number(aValue) - Number(bValue)
+          : Number(bValue) - Number(aValue);
+      }
+      
+      // Handle dates
+      if (sortConfig.key === 'Start Date') {
+        const dateA = new Date(a[sortConfig.key]);
+        const dateB = new Date(b[sortConfig.key]);
+        
+        if (!isNaN(dateA) && !isNaN(dateB)) {
+          return sortConfig.direction === 'ascending' 
+            ? dateA - dateB 
+            : dateB - dateA;
+        }
+      }
+      
+      // Default string comparison
+      if (aValue && bValue) {
+        return sortConfig.direction === 'ascending' 
+          ? aValue.toString().localeCompare(bValue.toString())
+          : bValue.toString().localeCompare(aValue.toString());
+      }
+      
+      // Handle undefined or null values
+      if (!aValue && bValue) return sortConfig.direction === 'ascending' ? -1 : 1;
+      if (aValue && !bValue) return sortConfig.direction === 'ascending' ? 1 : -1;
+      return 0;
+    });
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+  const exportToCSV = () => {
+    if (filteredData.length === 0) return;
+    
+    // Get headers based on user role
+    let headers;
+    if (userRole === 'ADMIN') {
+      headers = ['Name', 'Department', 'Start Date', 'Email'];
+    } else {
+      headers = ['Name', 'Department'];
+    }
+    
+    // Convert data to CSV format
+    const csvRows = [];
+    csvRows.push(headers.join(','));
+    
+    filteredData.forEach(row => {
+      const values = headers.map(header => {
+        const value = row[header] || '';
+        // Escape values that contain commas or quotes
+        return `"${value.toString().replace(/"/g, '""')}"`;
+      });
+      csvRows.push(values.join(','));
+    });
+    
+    // Create and download CSV file
+    const csvString = csvRows.join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'directory_export.csv');
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };const handleRefresh = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('https://script.google.com/macros/s/AKfycbx8X0uRNqFZS2tCsnQ7mxQwO647Io9KsqmLwnTm-pjs_NVOBX6ieatWqDBmi7gesRT3/exec');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      console.log('API Response (refresh):', result); // Log the response for debugging
+      
+      let receivedData = [];
+      
+      // Check if data exists and is properly formatted
+      if (result && Array.isArray(result) && result.length > 0) {
+        receivedData = result;
+        setError(null);
+      } else {
+        // If API returns no data or wrong format, show example data
+        console.log('Using example data (refresh)');
+        receivedData = EXAMPLE_DATA;
+        setError('API returned no data. Displaying example data instead.');
+      }
+      
+      // Format dates if present
+      receivedData = receivedData.map(item => {
+        const formattedItem = {...item};
+        if (formattedItem["Start Date"]) {
+          const date = new Date(formattedItem["Start Date"]);
+          if (!isNaN(date)) {
+            formattedItem["Start Date"] = date.toLocaleDateString();
+          }
+        }
+        return formattedItem;
+      });
+      
+      setData(receivedData);
+      setFilteredData(receivedData);
+      setSearchTerm('');
+    } catch (err) {
+      console.error('Error refreshing data:', err);
+      setError('Failed to refresh directory data. Displaying example data instead.');
+      // Use example data on error
+      const formattedExampleData = EXAMPLE_DATA.map(item => {
+        const formattedItem = {...item};
+        if (formattedItem["Start Date"]) {
+          const date = new Date(formattedItem["Start Date"]);
+          if (!isNaN(date)) {
+            formattedItem["Start Date"] = date.toLocaleDateString();
+          }
+        }
+        return formattedItem;
+      });
+      setData(formattedExampleData);
+      setFilteredData(formattedExampleData);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to sort data based on column
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    
+    setSortConfig({ key, direction });
+  };
+
+  if (!currentUser) {
+    return <div className="directory-container">Please log in to view the directory.</div>;
+  }
+  return (    <div className="directory-container">      <div className="directory-header">
+        <h1>Employee Directory</h1>
+        <div className="d-flex align-items-center">
+          {!loading && !error && data.length > 0 && (
+            <Button 
+              variant="outline-secondary" 
+              onClick={handleRefresh}
+              className="refresh-btn"
+            >
+              <i className="bi bi-arrow-clockwise me-2"></i>
+              Refresh
+            </Button>
+          )}
+        </div>
+      </div>
+      
+      {loading && <LoadingSpinner message="Loading directory data..." />}
+      
+      {error && <Alert variant="warning">{error}</Alert>}
+        {!loading && !error && (
+        <>          <div className="directory-controls">
+            <Form className="mb-4 search-form">
+              <InputGroup>
+                <InputGroup.Text>
+                  <i className="bi bi-search"></i>
+                </InputGroup.Text>
+                <FormControl
+                  placeholder="Search directory..."
+                  value={searchTerm}
+                  onChange={handleSearch}
+                />
+              </InputGroup>
+            </Form>
+            
+            {filteredData.length > 0 && (
+              <>
+                <Button 
+                  variant="outline-primary" 
+                  className="mb-4 export-btn me-2"
+                  onClick={exportToCSV}
+                >
+                  <i className="bi bi-download me-2"></i>
+                  Export to CSV
+                </Button>
+              </>
+            )}
+          </div>
+
+          {filteredData.length === 0 ? (
+            <div className="no-data">
+              {data.length === 0 ? "No directory data available." : "No results match your search."}
+            </div>
+          ) : (
+            <div className="table-container">
+              <table className="directory-table">
+                <thead>
+                  <tr>
+                    {userRole === 'ADMIN' ? (
+                      // Admin view - show name, department, start date, and email
+                      Object.keys(filteredData[0] || {})
+                        .filter(header => ['Name', 'Department', 'Start Date', 'Email'].includes(header))
+                        .map((header) => (
+                          <th key={header} onClick={() => requestSort(header)}>
+                            {header}
+                            {sortConfig.key === header && (
+                              <span>
+                                {sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'}
+                              </span>
+                            )}
+                          </th>
+                        ))
+                    ) : (
+                      // Regular user view - show only name and department
+                      Object.keys(filteredData[0] || {})
+                        .filter(header => ['Name', 'Department'].includes(header))
+                        .map((header) => (
+                          <th key={header} onClick={() => requestSort(header)}>
+                            {header}
+                            {sortConfig.key === header && (
+                              <span>
+                                {sortConfig.direction === 'ascending' ? ' ▲' : ' ▼'}
+                              </span>
+                            )}
+                          </th>
+                        ))
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {getSortedData().map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {userRole === 'ADMIN' ? (
+                        // Admin view - show name, department, start date, and email
+                        ['Name', 'Department', 'Start Date', 'Email'].map((header, cellIndex) => (
+                          <td key={cellIndex}>{row[header] !== null && row[header] !== undefined ? row[header] : ''}</td>
+                        ))
+                      ) : (
+                        // Regular user view - show only name and department
+                        ['Name', 'Department'].map((header, cellIndex) => (
+                          <td key={cellIndex}>{row[header] !== null && row[header] !== undefined ? row[header] : ''}</td>
+                        ))
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Directory;

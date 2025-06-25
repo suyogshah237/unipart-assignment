@@ -1,0 +1,82 @@
+/* Main app styling */
+body {
+  background-color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
+
+/* Card styling */
+.card {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Form controls */
+.form-control {
+  border-radius: 8px;
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+/* Buttons */
+.btn {
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
+}
+
+/* Auth container */
+.auth-container {
+  background-color: #ffffff;
+  min-height: calc(100vh - 56px);
+}
+
+/* App container */
+.app-container {
+  background-color: #ffffff;
+  min-height: calc(100vh - 56px);
+}
+
+/* Navbar styling */
+.navbar {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .card {
+    margin: 0 10px;
+  }
+  
+  .form-control, .btn {
+    font-size: 16px; /* Prevents zoom on input focus on mobile */
+  }
+}
+
+/* Alert styling */
+.alert {
+  border-radius: 8px;
+  padding: 12px 15px;
+}
